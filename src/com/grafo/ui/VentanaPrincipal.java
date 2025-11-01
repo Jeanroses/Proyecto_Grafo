@@ -48,11 +48,12 @@ public class VentanaPrincipal extends JFrame {
     }
 
     private void inicializarUI() {
-        setTitle("Sistema de Grafos");
+        setTitle("Sistema de grafos");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1400, 650);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
+        configurarIconoAplicacion();
 
         scrollPane = new JScrollPane(panelGrafo);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -457,6 +458,19 @@ public class VentanaPrincipal extends JFrame {
     private void configurarAtajos() {
     }
 
+    private void configurarIconoAplicacion() {
+        try {
+            Image icono = GestorImagenes.cargarIconoAplicacionEscalado(64, 64);
+            if (icono != null) {
+                setIconImage(icono);
+            } else {
+                System.err.println("No se pudo establecer el icono de la aplicación");
+            }
+        } catch (Exception e) {
+            System.err.println("Error al configurar el icono de la aplicación: " + e.getMessage());
+        }
+    }
+
     private void manejarCrearNodo(int x, int y) {
         try {
             gestorHistorial.guardarEstado(grafo);
@@ -770,29 +784,122 @@ public class VentanaPrincipal extends JFrame {
     }
 
     private void mostrarAcercaDe() {
-        String contenido = "<html><body style='width: 350px; text-align: center; font-family: Segoe UI; padding: 20px;'>" +
-            "<h1 style='color: #2563eb; margin: 10px 0;'>Sistema de Grafos</h1>" +
-            "<p style='color: #666; margin: 5px 0;'>Versión 2.0 - 2025</p>" +
-            "<hr style='margin: 20px 0;'>" +
-            "<h3 style='margin: 15px 0;'>Autor</h3>" +
-            "<p style='margin: 5px 0;'>Jean Paul Purihuaman De La Cruz</p>" +
-            "<hr style='margin: 20px 0;'>" +
-            "<h3 style='margin: 15px 0;'>Curso</h3>" +
-            "<p style='margin: 5px 0;'>Inteligencia Artificial</p>" +
-            "<hr style='margin: 20px 0;'>" +
-            "<h3 style='margin: 15px 0;'>GitHub</h3>" +
-            "<p style='margin: 5px 0;'><a href='https://github.com/Jeanroses'>github.com/Jeanroses</a></p>" +
-            "<hr style='margin: 20px 0;'>" +
-            "<h3 style='margin: 15px 0;'>Algoritmos Implementados</h3>" +
-            "<p style='margin: 5px 0;'>Dijkstra - Camino más corto<br>" +
-            "BFS - Búsqueda en anchura<br>" +
-            "DFS - Búsqueda en profundidad<br>" +
-            "Prim - Árbol de recubrimiento mínimo</p>" +
-            "</body></html>";
 
-        JLabel label = new JLabel(contenido);
-        label.setHorizontalAlignment(SwingConstants.CENTER);
+        JPanel panelPrincipal = new JPanel();
+        panelPrincipal.setLayout(new BoxLayout(panelPrincipal, BoxLayout.Y_AXIS));
+        panelPrincipal.setBackground(Color.WHITE);
+        panelPrincipal.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        JOptionPane.showMessageDialog(this, label, "Acerca de", JOptionPane.PLAIN_MESSAGE);
+        JLabel lblTitulo = new JLabel(InfoAplicacion.NOMBRE);
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        lblTitulo.setForeground(new Color(37, 99, 235));
+        lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblVersion = new JLabel("Versión " + InfoAplicacion.VERSION + " - " + InfoAplicacion.FECHA_VERSION);
+        lblVersion.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        lblVersion.setForeground(new Color(107, 114, 128));
+        lblVersion.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JPanel panelAutor = crearPanelInfo("Autor", InfoAplicacion.AUTOR);
+        JPanel panelCurso = crearPanelInfo("Curso", InfoAplicacion.CURSO);
+        JPanel panelGitHub = crearPanelInfo("GitHub", "github.com/Jeanroses");
+
+
+        JLabel lblAlgoritmos = new JLabel("Algoritmos Implementados");
+        lblAlgoritmos.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        lblAlgoritmos.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblAlgo1 = new JLabel("Dijkstra - Camino más corto");
+        lblAlgo1.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+        lblAlgo1.setForeground(new Color(107, 114, 128));
+        lblAlgo1.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblAlgo2 = new JLabel("BFS - Búsqueda en anchura");
+        lblAlgo2.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+        lblAlgo2.setForeground(new Color(107, 114, 128));
+        lblAlgo2.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblAlgo3 = new JLabel("DFS - Búsqueda en profundidad");
+        lblAlgo3.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+        lblAlgo3.setForeground(new Color(107, 114, 128));
+        lblAlgo3.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblAlgo4 = new JLabel("Prim - Árbol de recubrimiento mínimo");
+        lblAlgo4.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+        lblAlgo4.setForeground(new Color(107, 114, 128));
+        lblAlgo4.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblLicencia = new JLabel(InfoAplicacion.LICENCIA);
+        lblLicencia.setFont(new Font("Segoe UI", Font.PLAIN, 9));
+        lblLicencia.setForeground(new Color(156, 163, 175));
+        lblLicencia.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblCopyright = new JLabel(InfoAplicacion.COPYRIGHT);
+        lblCopyright.setFont(new Font("Segoe UI", Font.PLAIN, 9));
+        lblCopyright.setForeground(new Color(156, 163, 175));
+        lblCopyright.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        panelPrincipal.add(lblTitulo);
+        panelPrincipal.add(Box.createVerticalStrut(3));
+        panelPrincipal.add(lblVersion);
+        panelPrincipal.add(Box.createVerticalStrut(12));
+        panelPrincipal.add(crearSeparador());
+        panelPrincipal.add(Box.createVerticalStrut(10));
+        panelPrincipal.add(panelAutor);
+        panelPrincipal.add(Box.createVerticalStrut(8));
+        panelPrincipal.add(panelCurso);
+        panelPrincipal.add(Box.createVerticalStrut(8));
+        panelPrincipal.add(panelGitHub);
+        panelPrincipal.add(Box.createVerticalStrut(10));
+        panelPrincipal.add(crearSeparador());
+        panelPrincipal.add(Box.createVerticalStrut(10));
+        panelPrincipal.add(lblAlgoritmos);
+        panelPrincipal.add(Box.createVerticalStrut(5));
+        panelPrincipal.add(lblAlgo1);
+        panelPrincipal.add(Box.createVerticalStrut(2));
+        panelPrincipal.add(lblAlgo2);
+        panelPrincipal.add(Box.createVerticalStrut(2));
+        panelPrincipal.add(lblAlgo3);
+        panelPrincipal.add(Box.createVerticalStrut(2));
+        panelPrincipal.add(lblAlgo4);
+        panelPrincipal.add(Box.createVerticalStrut(10));
+        panelPrincipal.add(crearSeparador());
+        panelPrincipal.add(Box.createVerticalStrut(8));
+        panelPrincipal.add(lblLicencia);
+        panelPrincipal.add(Box.createVerticalStrut(3));
+        panelPrincipal.add(lblCopyright);
+
+        JDialog dialog = new JDialog(this, "Acerca de", true);
+        dialog.setContentPane(panelPrincipal);
+        dialog.pack();
+        dialog.setResizable(false);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
+    private JPanel crearPanelInfo(String etiqueta, String texto) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        panel.setOpaque(false);
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel lblEtiqueta = new JLabel(etiqueta + ":");
+        lblEtiqueta.setFont(new Font("Segoe UI", Font.BOLD, 11));
+        lblEtiqueta.setForeground(new Color(55, 65, 81));
+
+        JLabel lblTexto = new JLabel(texto);
+        lblTexto.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        lblTexto.setForeground(new Color(55, 65, 81));
+
+        panel.add(lblEtiqueta);
+        panel.add(lblTexto);
+
+        return panel;
+    }
+
+    private JSeparator crearSeparador() {
+        JSeparator separador = new JSeparator(SwingConstants.HORIZONTAL);
+        separador.setMaximumSize(new Dimension(300, 1));
+        separador.setForeground(new Color(229, 231, 235));
+        return separador;
     }
 }

@@ -19,6 +19,7 @@ C:\Users\LENOVO\Downloads\Proyecto_Grafo\Proyecto_Grafo\src\com\grafo\util\Gesto
 C:\Users\LENOVO\Downloads\Proyecto_Grafo\Proyecto_Grafo\src\com\grafo\util\GestorImagenes.java
 C:\Users\LENOVO\Downloads\Proyecto_Grafo\Proyecto_Grafo\src\com\grafo\util\GestorTemas.java
 C:\Users\LENOVO\Downloads\Proyecto_Grafo\Proyecto_Grafo\src\com\grafo\util\GestorZoom.java
+C:\Users\LENOVO\Downloads\Proyecto_Grafo\Proyecto_Grafo\src\com\grafo\util\InfoAplicacion.java
 C:\Users\LENOVO\Downloads\Proyecto_Grafo\Proyecto_Grafo\src\com\grafo\util\ModernUI.java
 C:\Users\LENOVO\Downloads\Proyecto_Grafo\Proyecto_Grafo\src\com\grafo\util\RenderizadorGrafo.java
 C:\Users\LENOVO\Downloads\Proyecto_Grafo\Proyecto_Grafo\src\com\grafo\util\ValidadorEntrada.java

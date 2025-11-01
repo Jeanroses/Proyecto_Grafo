@@ -1,6 +1,7 @@
 package com.grafo.ui;
 
 import com.grafo.model.Grafo;
+import com.grafo.util.GestorImagenes;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,6 +24,15 @@ public class VentanaMatriz extends JFrame {
         setSize(700, 550);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        try {
+            Image icono = GestorImagenes.cargarIconoAplicacionEscalado(64, 64);
+            if (icono != null) {
+                setIconImage(icono);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al configurar el icono: " + e.getMessage());
+        }
     }
 
     private void construirUI(Grafo grafo, boolean esMatrizAdyacencia) {
