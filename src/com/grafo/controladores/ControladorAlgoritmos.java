@@ -131,10 +131,14 @@ public class ControladorAlgoritmos {
 
         actualizadorDistancia.accept(String.valueOf(resultado.getDistanciaTotal()));
 
+        List<Integer> caminoBase1 = resultado.getCamino().stream()
+            .map(id -> id + 1)
+            .toList();
+
         String mensaje = String.format(
             "Algoritmo: %s\n\nCamino encontrado: %s\n\nDistancia total: %d",
             resultado.getNombreAlgoritmo(),
-            resultado.getCamino(),
+            caminoBase1,
             resultado.getDistanciaTotal()
         );
 
@@ -166,7 +170,7 @@ public class ControladorAlgoritmos {
         mensaje.append("Algoritmo: Prim (Árbol de Recubrimiento Mínimo)\n\n");
         mensaje.append("Aristas seleccionadas:\n");
         for (int[] arista : aristas) {
-            mensaje.append(String.format("  %d → %d (peso: %d)\n", arista[0], arista[1], arista[2]));
+            mensaje.append(String.format("  %d → %d (peso: %d)\n", arista[0] + 1, arista[1] + 1, arista[2]));
         }
         mensaje.append(String.format("\nPeso total: %d", resultado.getDistanciaTotal()));
 

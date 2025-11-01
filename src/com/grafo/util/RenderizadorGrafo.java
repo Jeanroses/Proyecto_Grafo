@@ -107,7 +107,7 @@ public class RenderizadorGrafo {
         g2d.setStroke(new BasicStroke(3.0f));
         g2d.drawOval(x, y, DIAMETRO_NODO, DIAMETRO_NODO);
 
-        String idStr = String.valueOf(nodo.getId());
+        String idStr = String.valueOf(nodo.getId() + 1);
         g2d.setFont(new Font("Arial", Font.BOLD, 14));
         FontMetrics fm = g2d.getFontMetrics();
         int textX = x + (DIAMETRO_NODO - fm.stringWidth(idStr)) / 2;

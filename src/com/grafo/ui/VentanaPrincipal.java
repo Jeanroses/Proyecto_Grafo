@@ -462,7 +462,7 @@ public class VentanaPrincipal extends JFrame {
             gestorHistorial.guardarEstado(grafo);
             int id = grafo.agregarNodo(x, y);
             panelGrafo.repaint();
-            actualizarEstado("✓ Nodo " + id + " creado");
+            actualizarEstado("✓ Nodo " + (id + 1) + " creado");
         } catch (IllegalStateException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -481,7 +481,7 @@ public class VentanaPrincipal extends JFrame {
             nodoSeleccionado1 = idNodo;
             panelGrafo.setNodoSeleccionado1(idNodo);
             panelGrafo.repaint();
-            actualizarEstado("Nodo " + idNodo + " seleccionado. Seleccione el segundo nodo");
+            actualizarEstado("Nodo " + (idNodo + 1) + " seleccionado. Seleccione el segundo nodo");
         } else if (nodoSeleccionado2 == null) {
             if (idNodo == nodoSeleccionado1) {
                 nodoSeleccionado1 = null;
@@ -498,7 +498,7 @@ public class VentanaPrincipal extends JFrame {
                 gestorHistorial.guardarEstado(grafo);
                 grafo.agregarArista(nodoSeleccionado1, nodoSeleccionado2, peso);
 
-                actualizarEstado("Arista creada: " + nodoSeleccionado1 + " → " + nodoSeleccionado2 + " (peso: " + peso + ")");
+                actualizarEstado("Arista creada: " + (nodoSeleccionado1 + 1) + " → " + (nodoSeleccionado2 + 1) + " (peso: " + peso + ")");
                 nodoSeleccionado1 = null;
                 nodoSeleccionado2 = null;
                 panelGrafo.setNodoSeleccionado1(null);
@@ -536,7 +536,7 @@ public class VentanaPrincipal extends JFrame {
             gestorHistorial.guardarEstado(grafo);
             grafo.agregarArista(origen, destino, peso);
             panelGrafo.repaint();
-            actualizarEstado("Arista creada: " + origen + " → " + destino);
+            actualizarEstado("Arista creada: " + (origen + 1) + " → " + (destino + 1));
         } catch (IllegalStateException ignored) {
         }
     }
@@ -595,7 +595,7 @@ public class VentanaPrincipal extends JFrame {
             grafo.eliminarNodo(nodo);
             panelGrafo.limpiarResaltado();
             panelGrafo.repaint();
-            actualizarEstado("Nodo " + nodo + " eliminado");
+            actualizarEstado("Nodo " + (nodo + 1) + " eliminado");
         } catch (IllegalStateException ignored) {
         }
     }

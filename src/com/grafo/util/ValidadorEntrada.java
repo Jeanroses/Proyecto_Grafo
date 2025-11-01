@@ -16,15 +16,15 @@ public class ValidadorEntrada {
             try {
                 int nodo = Integer.parseInt(input.trim());
 
-                if (nodo < 0 || nodo >= maxNodos) {
+                if (nodo < 1 || nodo > maxNodos) {
                     DialogosModernos.mostrarMensaje(parent,
-                            "El nodo debe estar entre 0 y " + (maxNodos - 1),
+                            "El nodo debe estar entre 1 y " + maxNodos,
                             "Nodo Inválido",
                             DialogosModernos.TipoMensaje.ERROR);
                     continue;
                 }
 
-                return nodo;
+                return nodo - 1; // Convertir a índice base 0
             } catch (NumberFormatException e) {
                 DialogosModernos.mostrarMensaje(parent,
                         "Debe ingresar un número válido",
