@@ -140,25 +140,32 @@ public class Grafo {
         limpiar();
 
         int[][] coordenadas = {
-            {202, 12}, {102, 74}, {8, 165}, {198, 113},
-            {248, 233}, {352, 300}, {481, 368}, {416, 177}
+            {150, 50}, {350, 50}, {100, 150}, {250, 150},
+            {400, 150}, {150, 250}, {350, 250}, {250, 350},
+            {450, 200}, {50, 300}
         };
 
         for (int[] coord : coordenadas) {
             agregarNodo(coord[0], coord[1]);
         }
 
-        agregarArista(0, 1, 50);
-        agregarArista(0, 3, 46);
-        agregarArista(0, 4, 216);
-        agregarArista(0, 7, 578);
-        agregarArista(1, 2, 59);
-        agregarArista(2, 3, 89);
-        agregarArista(2, 4, 174);
-        agregarArista(3, 4, 150);
-        agregarArista(4, 5, 471);
-        agregarArista(5, 6, 194);
-        agregarArista(5, 7, 398);
+        agregarArista(0, 1, 120);
+        agregarArista(0, 2, 85);
+        agregarArista(0, 3, 95);
+        agregarArista(1, 3, 70);
+        agregarArista(1, 4, 110);
+        agregarArista(2, 3, 140);
+        agregarArista(2, 5, 90);
+        agregarArista(2, 9, 65);
+        agregarArista(3, 5, 105);
+        agregarArista(3, 6, 125);
+        agregarArista(4, 6, 180);
+        agregarArista(4, 8, 75);
+        agregarArista(5, 7, 160);
+        agregarArista(5, 9, 200);
+        agregarArista(6, 7, 95);
+        agregarArista(6, 8, 135);
+        agregarArista(7, 9, 220);
     }
 
     private void validarNodo(int nodo) {

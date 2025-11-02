@@ -26,14 +26,17 @@ public class ControladorAlgoritmos {
     private final Component parentComponent;
     private final Consumer<String> actualizadorDistancia;
     private final Consumer<String> actualizadorEstado;
+    private final Consumer<String> actualizadorResultado;
 
     public ControladorAlgoritmos(Grafo grafo, PanelGrafo panelGrafo, Component parentComponent,
-                                Consumer<String> actualizadorDistancia, Consumer<String> actualizadorEstado) {
+                                Consumer<String> actualizadorDistancia, Consumer<String> actualizadorEstado,
+                                Consumer<String> actualizadorResultado) {
         this.grafo = grafo;
         this.panelGrafo = panelGrafo;
         this.parentComponent = parentComponent;
         this.actualizadorDistancia = actualizadorDistancia;
         this.actualizadorEstado = actualizadorEstado;
+        this.actualizadorResultado = actualizadorResultado;
     }
 
     public void ejecutarDijkstra() {
@@ -122,6 +125,7 @@ public class ControladorAlgoritmos {
                 JOptionPane.WARNING_MESSAGE);
             actualizadorDistancia.accept("N/A");
             actualizadorEstado.accept("No se encontró camino");
+            actualizadorResultado.accept("No se encontró un camino entre los nodos seleccionados");
             return;
         }
 
@@ -134,6 +138,11 @@ public class ControladorAlgoritmos {
         List<Integer> caminoBase1 = resultado.getCamino().stream()
             .map(id -> id + 1)
             .toList();
+
+        String caminoStr = caminoBase1.toString().replace("[", "").replace("]", "");
+        String resultadoPanelInferior = String.format("Camino: %s", caminoStr);
+
+        actualizadorResultado.accept(resultadoPanelInferior);
 
         String mensaje = String.format(
             "Algoritmo: %s\n\nCamino encontrado: %s\n\nDistancia total: %d",
@@ -157,6 +166,7 @@ public class ControladorAlgoritmos {
                 "Prim",
                 JOptionPane.WARNING_MESSAGE);
             actualizadorDistancia.accept("N/A");
+            actualizadorResultado.accept("No se pudo construir el árbol de recubrimiento mínimo");
             return;
         }
 
@@ -165,6 +175,19 @@ public class ControladorAlgoritmos {
         panelGrafo.repaint();
 
         actualizadorDistancia.accept(String.valueOf(resultado.getDistanciaTotal()));
+
+        StringBuilder aristasStr = new StringBuilder();
+        for (int i = 0; i < aristas.size(); i++) {
+            int[] arista = aristas.get(i);
+            aristasStr.append(String.format("%d-%d(%d)", arista[0] + 1, arista[1] + 1, arista[2]));
+            if (i < aristas.size() - 1) {
+                aristasStr.append(", ");
+            }
+        }
+
+        String resultadoPanelInferior = String.format("Aristas: %s", aristasStr.toString());
+
+        actualizadorResultado.accept(resultadoPanelInferior);
 
         StringBuilder mensaje = new StringBuilder();
         mensaje.append("Algoritmo: Prim (Árbol de Recubrimiento Mínimo)\n\n");

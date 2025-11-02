@@ -22,6 +22,7 @@ public class VentanaPrincipal extends JFrame {
     private JTextField txtDistanciaTotal;
     private JLabel lblEstado;
     private JScrollPane scrollPane;
+    private JTextArea txtResultadoAlgoritmo;
 
     private Integer nodoSeleccionado1 = null;
     private Integer nodoSeleccionado2 = null;
@@ -39,7 +40,8 @@ public class VentanaPrincipal extends JFrame {
         this.controladorAlgoritmos = new ControladorAlgoritmos(
             grafo, panelGrafo, this,
             text -> txtDistanciaTotal.setText(text),
-            this::actualizarEstado
+            this::actualizarEstado,
+            this::mostrarResultadoEnPanel
         );
 
         inicializarUI();
@@ -240,6 +242,23 @@ public class VentanaPrincipal extends JFrame {
         panelEstado.add(iconoEstado);
         panelEstado.add(lblEstado);
 
+        JPanel panelCentro = new JPanel(new BorderLayout());
+        panelCentro.setBackground(ModernUI.PANEL_BG);
+
+        txtResultadoAlgoritmo = new JTextArea(1, 50);
+        txtResultadoAlgoritmo.setEditable(false);
+        txtResultadoAlgoritmo.setFont(new Font("Consolas", Font.PLAIN, 12));
+        txtResultadoAlgoritmo.setBackground(new Color(248, 250, 252));
+        txtResultadoAlgoritmo.setForeground(ModernUI.TEXT_DARK);
+        txtResultadoAlgoritmo.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(206, 212, 218), 1),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
+        txtResultadoAlgoritmo.setLineWrap(false);
+        txtResultadoAlgoritmo.setText("Ejecute un algoritmo para ver resultados aquí");
+
+        panelCentro.add(txtResultadoAlgoritmo, BorderLayout.CENTER);
+
         JPanel panelDistancia = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         panelDistancia.setBackground(ModernUI.PANEL_BG);
 
@@ -259,6 +278,7 @@ public class VentanaPrincipal extends JFrame {
         panelDistancia.add(txtDistanciaTotal);
 
         panel.add(panelEstado, BorderLayout.WEST);
+        panel.add(panelCentro, BorderLayout.CENTER);
         panel.add(panelDistancia, BorderLayout.EAST);
 
         return panel;
@@ -688,6 +708,10 @@ public class VentanaPrincipal extends JFrame {
 
     private void actualizarEstado(String mensaje) {
         lblEstado.setText(mensaje);
+    }
+
+    private void mostrarResultadoEnPanel(String resultado) {
+        txtResultadoAlgoritmo.setText(resultado);
     }
 
     private void deshacer() {
