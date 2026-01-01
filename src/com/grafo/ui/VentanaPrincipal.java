@@ -394,9 +394,15 @@ public class VentanaPrincipal extends JFrame {
         itemPrim.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK));
         itemPrim.addActionListener(_ -> ejecutarPrim());
 
+        JMenuItem itemAStar = new JMenuItem("A* - Busqueda Heuristica");
+        itemAStar.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        itemAStar.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
+        itemAStar.addActionListener(_ -> ejecutarAStar());
+
         menuAlgoritmos.add(itemDijkstra);
         menuAlgoritmos.add(itemBFS);
         menuAlgoritmos.add(itemDFS);
+        menuAlgoritmos.add(itemAStar);
         menuAlgoritmos.addSeparator();
         menuAlgoritmos.add(itemPrim);
 
@@ -648,6 +654,10 @@ public class VentanaPrincipal extends JFrame {
 
     private void ejecutarPrim() {
         controladorAlgoritmos.ejecutarPrim();
+    }
+
+    private void ejecutarAStar() {
+        controladorAlgoritmos.ejecutarAStar();
     }
 
     private void mostrarMatrizAdyacencia() {

@@ -105,6 +105,23 @@ public class ControladorAlgoritmos {
         }
     }
 
+    public void ejecutarAStar() {
+        if (!validarNodosMinimos()) return;
+
+        try {
+            int origen = ValidadorEntrada.solicitarNodoOrigen(
+                parentComponent, "Ingrese el nodo origen:", grafo.getContadorNodos());
+            int destino = ValidadorEntrada.solicitarNodoOrigen(
+                parentComponent, "Ingrese el nodo destino:", grafo.getContadorNodos());
+
+            var aStar = new AlgoritmoAStar(grafo);
+            var resultado = aStar.ejecutar(origen, destino);
+
+            mostrarResultado(resultado);
+        } catch (IllegalStateException ignored) {
+        }
+    }
+
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean validarNodosMinimos() {
         if (grafo.getContadorNodos() < MIN_NODOS_CAMINO) {
