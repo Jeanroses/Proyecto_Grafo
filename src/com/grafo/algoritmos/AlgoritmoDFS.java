@@ -1,91 +1,69 @@
 package com.grafo.algoritmos;
 
+import com.grafo.algoritmos.util.ReconstruirCamino;
 import com.grafo.model.*;
 import java.util.*;
 
 /**
- * Implementación del algoritmo DFS (Depth-First Search) - Búsqueda en Profundidad
- *
+ * Implementación del algoritmo DFS (Depth-First Search)
+ * 
  * @author Jean Paul Purihuaman De La Cruz
  */
-public class AlgoritmoDFS {
+public class AlgoritmoDFS implements AlgoritmoBusqueda {
+
+    private static final String NOMBRE = "DFS";
     private final Grafo grafo;
-    private boolean[] visitados;
-    private int[] predecesores;
-    private int nodoDestino;
-    private boolean encontrado;
 
     public AlgoritmoDFS(Grafo grafo) {
-        this.grafo = grafo;
+        this.grafo = Objects.requireNonNull(grafo, "El grafo no puede ser null");
     }
 
+    @Override
     public ResultadoAlgoritmo ejecutar(int nodoOrigen, int nodoDestino) {
         int totalNodos = grafo.getContadorNodos();
 
         if (nodoOrigen == nodoDestino) {
-            return new ResultadoAlgoritmo(List.of(nodoOrigen), 0, "DFS");
+            return new ResultadoAlgoritmo(List.of(nodoOrigen), 0, NOMBRE);
         }
 
-        this.visitados = new boolean[totalNodos];
-        this.predecesores = new int[totalNodos];
-        this.nodoDestino = nodoDestino;
-        this.encontrado = false;
-
+        boolean[] visitados = new boolean[totalNodos];
+        int[] predecesores = new int[totalNodos];
         Arrays.fill(predecesores, -1);
 
-        dfsRecursivo(nodoOrigen);
+        boolean encontrado = dfsRecursivo(nodoOrigen, nodoDestino, visitados, predecesores);
 
         if (!encontrado) {
-            return ResultadoAlgoritmo.sinCamino("DFS");
+            return ResultadoAlgoritmo.sinCamino(NOMBRE);
         }
 
-        List<Integer> camino = reconstruirCamino(nodoOrigen, nodoDestino);
-        int distancia = calcularDistanciaTotal(camino);
+        List<Integer> camino = ReconstruirCamino.desde(predecesores, nodoOrigen, nodoDestino);
+        int distancia = ReconstruirCamino.calcularDistancia(grafo, camino);
 
-        return new ResultadoAlgoritmo(camino, distancia, "DFS");
+        return new ResultadoAlgoritmo(camino, distancia, NOMBRE);
     }
 
-    private void dfsRecursivo(int nodoActual) {
-        if (encontrado) {
-            return;
-        }
-
+    private boolean dfsRecursivo(int nodoActual, int nodoDestino,
+            boolean[] visitados, int[] predecesores) {
         visitados[nodoActual] = true;
 
         if (nodoActual == nodoDestino) {
-            encontrado = true;
-            return;
+            return true;
         }
 
-        List<Integer> vecinos = grafo.getVecinos(nodoActual);
-        for (int vecino : vecinos) {
+        for (int vecino : grafo.getVecinos(nodoActual)) {
             if (!visitados[vecino]) {
                 predecesores[vecino] = nodoActual;
-                dfsRecursivo(vecino);
+                if (dfsRecursivo(vecino, nodoDestino, visitados, predecesores)) {
+                    return true;
+                }
             }
         }
+
+        return false;
     }
 
-    private List<Integer> reconstruirCamino(int origen, int destino) {
-        final Deque<Integer> camino = new ArrayDeque<>();
-        int actual = destino;
-
-        while (actual != -1) {
-            camino.addFirst(actual);
-            if (actual == origen) {
-                break;
-            }
-            actual = predecesores[actual];
-        }
-
-        return new ArrayList<>(camino);
-    }
-
-    private int calcularDistanciaTotal(List<Integer> camino) {
-        int distancia = 0;
-        for (int i = 0; i < camino.size() - 1; i++) {
-            distancia += grafo.getPeso(camino.get(i), camino.get(i + 1));
-        }
-        return distancia;
+    @Override
+    public String getNombre() {
+        return NOMBRE;
     }
 }

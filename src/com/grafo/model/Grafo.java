@@ -3,11 +3,13 @@ package com.grafo.model;
 import java.util.*;
 
 /**
- * Representación de un grafo no dirigido utilizando matrices de adyacencia y pesos
+ * Representación de un grafo no dirigido utilizando matrices de adyacencia y
+ * pesos.
+ * Implementa interfaces de lectura y escritura para aplicar ISP.
+ * 
  * @author Jean Paul Purihuaman De La Cruz
  */
-
-public class Grafo {
+public class Grafo implements IGrafoLectura, IGrafoEscritura {
     private static final int MAX_NODOS = 100;
     private static final int RADIO_NODO_RENDER = 20;
     private static final int RADIO_DETECCION = 25;
@@ -140,9 +142,9 @@ public class Grafo {
         limpiar();
 
         int[][] coordenadas = {
-            {150, 50}, {350, 50}, {100, 150}, {250, 150},
-            {400, 150}, {150, 250}, {350, 250}, {250, 350},
-            {450, 200}, {50, 300}
+                { 150, 50 }, { 350, 50 }, { 100, 150 }, { 250, 150 },
+                { 400, 150 }, { 150, 250 }, { 350, 250 }, { 250, 350 },
+                { 450, 200 }, { 50, 300 }
         };
 
         for (int[] coord : coordenadas) {

@@ -1,26 +1,29 @@
 package com.grafo.algoritmos;
 
+import com.grafo.algoritmos.util.ReconstruirCamino;
 import com.grafo.model.*;
 import java.util.*;
 
 /**
- * Implementación del algoritmo A* para encontrar el camino más corto
- * usando heurística de distancia euclidiana
- *
+ * Implementación del algoritmo A* con heurística euclidiana
+ * 
  * @author Jean Paul Purihuaman De La Cruz
  */
-public class AlgoritmoAStar {
+public class AlgoritmoAStar implements AlgoritmoBusqueda {
+
+    private static final String NOMBRE = "A*";
     private final Grafo grafo;
 
     public AlgoritmoAStar(Grafo grafo) {
-        this.grafo = grafo;
+        this.grafo = Objects.requireNonNull(grafo, "El grafo no puede ser null");
     }
 
+    @Override
     public ResultadoAlgoritmo ejecutar(int nodoOrigen, int nodoDestino) {
         int totalNodos = grafo.getContadorNodos();
 
         if (nodoOrigen == nodoDestino) {
-            return new ResultadoAlgoritmo(List.of(nodoOrigen), 0, "A*");
+            return new ResultadoAlgoritmo(List.of(nodoOrigen), 0, NOMBRE);
         }
 
         double[] gScore = new double[totalNodos];
@@ -36,17 +39,16 @@ public class AlgoritmoAStar {
         fScore[nodoOrigen] = calcularHeuristica(nodoOrigen, nodoDestino);
 
         PriorityQueue<Integer> abiertos = new PriorityQueue<>(
-            Comparator.comparingDouble(n -> fScore[n])
-        );
+                Comparator.comparingDouble(n -> fScore[n]));
         abiertos.add(nodoOrigen);
 
         while (!abiertos.isEmpty()) {
             int actual = abiertos.poll();
 
             if (actual == nodoDestino) {
-                List<Integer> camino = reconstruirCamino(predecesores, nodoOrigen, nodoDestino);
+                List<Integer> camino = ReconstruirCamino.desde(predecesores, nodoOrigen, nodoDestino);
                 int distanciaTotal = (int) Math.round(gScore[nodoDestino]);
-                return new ResultadoAlgoritmo(camino, distanciaTotal, "A*");
+                return new ResultadoAlgoritmo(camino, distanciaTotal, NOMBRE);
             }
 
             if (cerrado[actual]) {
@@ -54,8 +56,7 @@ public class AlgoritmoAStar {
             }
             cerrado[actual] = true;
 
-            List<Integer> vecinos = grafo.getVecinos(actual);
-            for (int vecino : vecinos) {
+            for (int vecino : grafo.getVecinos(actual)) {
                 if (cerrado[vecino]) {
                     continue;
                 }
@@ -71,7 +72,7 @@ public class AlgoritmoAStar {
             }
         }
 
-        return ResultadoAlgoritmo.sinCamino("A*");
+        return ResultadoAlgoritmo.sinCamino(NOMBRE);
     }
 
     private double calcularHeuristica(int nodo, int destino) {
@@ -87,18 +88,8 @@ public class AlgoritmoAStar {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    private List<Integer> reconstruirCamino(int[] predecesores, int origen, int destino) {
-        final Deque<Integer> camino = new ArrayDeque<>();
-        int actual = destino;
-
-        while (actual != -1) {
-            camino.addFirst(actual);
-            if (actual == origen) {
-                break;
-            }
-            actual = predecesores[actual];
-        }
-
-        return new ArrayList<>(camino);
+    @Override
+    public String getNombre() {
+        return NOMBRE;
     }
 }

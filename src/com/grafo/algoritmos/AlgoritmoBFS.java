@@ -1,25 +1,29 @@
 package com.grafo.algoritmos;
 
+import com.grafo.algoritmos.util.ReconstruirCamino;
 import com.grafo.model.*;
 import java.util.*;
 
 /**
- * Implementación del algoritmo BFS (Breadth-First Search) - Búsqueda en Anchura
- *
+ * Implementación del algoritmo BFS (Breadth-First Search)
+ * 
  * @author Jean Paul Purihuaman De La Cruz
  */
-public class AlgoritmoBFS {
+public class AlgoritmoBFS implements AlgoritmoBusqueda {
+
+    private static final String NOMBRE = "BFS";
     private final Grafo grafo;
 
     public AlgoritmoBFS(Grafo grafo) {
-        this.grafo = grafo;
+        this.grafo = Objects.requireNonNull(grafo, "El grafo no puede ser null");
     }
 
+    @Override
     public ResultadoAlgoritmo ejecutar(int nodoOrigen, int nodoDestino) {
         int totalNodos = grafo.getContadorNodos();
 
         if (nodoOrigen == nodoDestino) {
-            return new ResultadoAlgoritmo(List.of(nodoOrigen), 0, "BFS");
+            return new ResultadoAlgoritmo(List.of(nodoOrigen), 0, NOMBRE);
         }
 
         boolean[] visitados = new boolean[totalNodos];
@@ -37,8 +41,7 @@ public class AlgoritmoBFS {
                 break;
             }
 
-            List<Integer> vecinos = grafo.getVecinos(nodoActual);
-            for (int vecino : vecinos) {
+            for (int vecino : grafo.getVecinos(nodoActual)) {
                 if (!visitados[vecino]) {
                     visitados[vecino] = true;
                     predecesores[vecino] = nodoActual;
@@ -48,35 +51,17 @@ public class AlgoritmoBFS {
         }
 
         if (!visitados[nodoDestino]) {
-            return ResultadoAlgoritmo.sinCamino("BFS");
+            return ResultadoAlgoritmo.sinCamino(NOMBRE);
         }
 
-        List<Integer> camino = reconstruirCamino(predecesores, nodoOrigen, nodoDestino);
-        int distancia = calcularDistanciaTotal(camino);
+        List<Integer> camino = ReconstruirCamino.desde(predecesores, nodoOrigen, nodoDestino);
+        int distancia = ReconstruirCamino.calcularDistancia(grafo, camino);
 
-        return new ResultadoAlgoritmo(camino, distancia, "BFS");
+        return new ResultadoAlgoritmo(camino, distancia, NOMBRE);
     }
 
-    private List<Integer> reconstruirCamino(int[] predecesores, int origen, int destino) {
-        final Deque<Integer> camino = new ArrayDeque<>();
-        int actual = destino;
-
-        while (actual != -1) {
-            camino.addFirst(actual);
-            if (actual == origen) {
-                break;
-            }
-            actual = predecesores[actual];
-        }
-
-        return new ArrayList<>(camino);
-    }
-
-    private int calcularDistanciaTotal(List<Integer> camino) {
-        int distancia = 0;
-        for (int i = 0; i < camino.size() - 1; i++) {
-            distancia += grafo.getPeso(camino.get(i), camino.get(i + 1));
-        }
-        return distancia;
+    @Override
+    public String getNombre() {
+        return NOMBRE;
     }
 }

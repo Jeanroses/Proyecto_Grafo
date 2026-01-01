@@ -1,25 +1,29 @@
 package com.grafo.algoritmos;
 
+import com.grafo.algoritmos.util.ReconstruirCamino;
 import com.grafo.model.*;
 import java.util.*;
 
 /**
  * Implementación del algoritmo de Dijkstra para encontrar el camino más corto
- *
+ * 
  * @author Jean Paul Purihuaman De La Cruz
  */
-public class AlgoritmoDijkstra {
+public class AlgoritmoDijkstra implements AlgoritmoBusqueda {
+
+    private static final String NOMBRE = "Dijkstra";
     private final Grafo grafo;
 
     public AlgoritmoDijkstra(Grafo grafo) {
-        this.grafo = grafo;
+        this.grafo = Objects.requireNonNull(grafo, "El grafo no puede ser null");
     }
 
+    @Override
     public ResultadoAlgoritmo ejecutar(int nodoOrigen, int nodoDestino) {
         int totalNodos = grafo.getContadorNodos();
 
         if (nodoOrigen == nodoDestino) {
-            return new ResultadoAlgoritmo(List.of(nodoOrigen), 0, "Dijkstra");
+            return new ResultadoAlgoritmo(List.of(nodoOrigen), 0, NOMBRE);
         }
 
         int[] distancias = new int[totalNodos];
@@ -38,8 +42,7 @@ public class AlgoritmoDijkstra {
             etiquetados[nodoActual] = true;
             nodosEtiquetados++;
 
-            List<Integer> vecinos = grafo.getVecinos(nodoActual);
-            for (int vecino : vecinos) {
+            for (int vecino : grafo.getVecinos(nodoActual)) {
                 if (!etiquetados[vecino]) {
                     int nuevaDistancia = distancias[nodoActual] + grafo.getPeso(nodoActual, vecino);
 
@@ -69,25 +72,15 @@ public class AlgoritmoDijkstra {
         }
 
         if (!visitados[nodoDestino]) {
-            return ResultadoAlgoritmo.sinCamino("Dijkstra");
+            return ResultadoAlgoritmo.sinCamino(NOMBRE);
         }
 
-        List<Integer> camino = reconstruirCamino(predecesores, nodoOrigen, nodoDestino);
-        return new ResultadoAlgoritmo(camino, distancias[nodoDestino], "Dijkstra");
+        List<Integer> camino = ReconstruirCamino.desde(predecesores, nodoOrigen, nodoDestino);
+        return new ResultadoAlgoritmo(camino, distancias[nodoDestino], NOMBRE);
     }
 
-    private List<Integer> reconstruirCamino(int[] predecesores, int origen, int destino) {
-        final Deque<Integer> camino = new ArrayDeque<>();
-        int actual = destino;
-
-        while (actual != -1) {
-            camino.addFirst(actual);
-            if (actual == origen) {
-                break;
-            }
-            actual = predecesores[actual];
-        }
-
-        return new ArrayList<>(camino);
+    @Override
+    public String getNombre() {
+        return NOMBRE;
     }
 }

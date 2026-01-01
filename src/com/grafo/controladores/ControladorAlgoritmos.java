@@ -1,6 +1,7 @@
 package com.grafo.controladores;
 
 import com.grafo.algoritmos.*;
+import com.grafo.model.Arista;
 import com.grafo.model.Grafo;
 import com.grafo.model.ResultadoAlgoritmo;
 import com.grafo.ui.PanelGrafo;
@@ -9,12 +10,14 @@ import com.grafo.util.ValidadorEntrada;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
  * Controlador para la ejecución de algoritmos
- *
+ * 
  * @author Jean Paul Purihuaman De La Cruz
  */
 public class ControladorAlgoritmos {
@@ -27,97 +30,86 @@ public class ControladorAlgoritmos {
     private final Consumer<String> actualizadorDistancia;
     private final Consumer<String> actualizadorEstado;
     private final Consumer<String> actualizadorResultado;
+    private final Map<String, AlgoritmoBusqueda> algoritmosBusqueda;
 
     public ControladorAlgoritmos(Grafo grafo, PanelGrafo panelGrafo, Component parentComponent,
-                                Consumer<String> actualizadorDistancia, Consumer<String> actualizadorEstado,
-                                Consumer<String> actualizadorResultado) {
+            Consumer<String> actualizadorDistancia, Consumer<String> actualizadorEstado,
+            Consumer<String> actualizadorResultado) {
         this.grafo = grafo;
         this.panelGrafo = panelGrafo;
         this.parentComponent = parentComponent;
         this.actualizadorDistancia = actualizadorDistancia;
         this.actualizadorEstado = actualizadorEstado;
         this.actualizadorResultado = actualizadorResultado;
+        this.algoritmosBusqueda = new HashMap<>();
+
+        registrarAlgoritmosDefault();
+    }
+
+    private void registrarAlgoritmosDefault() {
+        algoritmosBusqueda.put("Dijkstra", new AlgoritmoDijkstra(grafo));
+        algoritmosBusqueda.put("BFS", new AlgoritmoBFS(grafo));
+        algoritmosBusqueda.put("DFS", new AlgoritmoDFS(grafo));
+        algoritmosBusqueda.put("A*", new AlgoritmoAStar(grafo));
+    }
+
+    public void registrarAlgoritmo(String nombre, AlgoritmoBusqueda algoritmo) {
+        algoritmosBusqueda.put(nombre, algoritmo);
     }
 
     public void ejecutarDijkstra() {
-        if (!validarNodosMinimos()) return;
-
-        try {
-            int origen = ValidadorEntrada.solicitarNodoOrigen(
-                parentComponent, "Ingrese el nodo origen:", grafo.getContadorNodos());
-            int destino = ValidadorEntrada.solicitarNodoOrigen(
-                parentComponent, "Ingrese el nodo destino:", grafo.getContadorNodos());
-
-            var dijkstra = new AlgoritmoDijkstra(grafo);
-            var resultado = dijkstra.ejecutar(origen, destino);
-
-            mostrarResultado(resultado);
-        } catch (IllegalStateException ignored) {
-        }
+        ejecutarAlgoritmoBusqueda("Dijkstra");
     }
 
     public void ejecutarBFS() {
-        if (!validarNodosMinimos()) return;
-
-        try {
-            int origen = ValidadorEntrada.solicitarNodoOrigen(
-                parentComponent, "Ingrese el nodo origen:", grafo.getContadorNodos());
-            int destino = ValidadorEntrada.solicitarNodoOrigen(
-                parentComponent, "Ingrese el nodo destino:", grafo.getContadorNodos());
-
-            var bfs = new AlgoritmoBFS(grafo);
-            var resultado = bfs.ejecutar(origen, destino);
-
-            mostrarResultado(resultado);
-        } catch (IllegalStateException ignored) {
-        }
+        ejecutarAlgoritmoBusqueda("BFS");
     }
 
     public void ejecutarDFS() {
-        if (!validarNodosMinimos()) return;
+        ejecutarAlgoritmoBusqueda("DFS");
+    }
+
+    public void ejecutarAStar() {
+        ejecutarAlgoritmoBusqueda("A*");
+    }
+
+    private void ejecutarAlgoritmoBusqueda(String nombre) {
+        if (!validarNodosMinimos())
+            return;
+
+        AlgoritmoBusqueda algoritmo = algoritmosBusqueda.get(nombre);
+        if (algoritmo == null) {
+            JOptionPane.showMessageDialog(parentComponent,
+                    "Algoritmo no registrado: " + nombre,
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         try {
             int origen = ValidadorEntrada.solicitarNodoOrigen(
-                parentComponent, "Ingrese el nodo origen:", grafo.getContadorNodos());
+                    parentComponent, "Ingrese el nodo origen:", grafo.getContadorNodos());
             int destino = ValidadorEntrada.solicitarNodoOrigen(
-                parentComponent, "Ingrese el nodo destino:", grafo.getContadorNodos());
+                    parentComponent, "Ingrese el nodo destino:", grafo.getContadorNodos());
 
-            var dfs = new AlgoritmoDFS(grafo);
-            var resultado = dfs.ejecutar(origen, destino);
-
+            var resultado = algoritmo.ejecutar(origen, destino);
             mostrarResultado(resultado);
         } catch (IllegalStateException ignored) {
         }
     }
 
     public void ejecutarPrim() {
-        if (!validarNodosMinimos()) return;
+        if (!validarNodosMinimos())
+            return;
 
         try {
             int origen = ValidadorEntrada.solicitarNodoOrigen(
-                parentComponent, "Ingrese el nodo origen:", grafo.getContadorNodos());
+                    parentComponent, "Ingrese el nodo origen:", grafo.getContadorNodos());
 
             var prim = new AlgoritmoPrim(grafo);
             var resultado = prim.ejecutar(origen);
 
-            mostrarResultadoPrim(resultado, prim.getAristasSeleccionadas(origen));
-        } catch (IllegalStateException ignored) {
-        }
-    }
-
-    public void ejecutarAStar() {
-        if (!validarNodosMinimos()) return;
-
-        try {
-            int origen = ValidadorEntrada.solicitarNodoOrigen(
-                parentComponent, "Ingrese el nodo origen:", grafo.getContadorNodos());
-            int destino = ValidadorEntrada.solicitarNodoOrigen(
-                parentComponent, "Ingrese el nodo destino:", grafo.getContadorNodos());
-
-            var aStar = new AlgoritmoAStar(grafo);
-            var resultado = aStar.ejecutar(origen, destino);
-
-            mostrarResultado(resultado);
+            mostrarResultadoPrim(resultado, prim.getAristasSeleccionadas());
         } catch (IllegalStateException ignored) {
         }
     }
@@ -126,9 +118,9 @@ public class ControladorAlgoritmos {
     private boolean validarNodosMinimos() {
         if (grafo.getContadorNodos() < MIN_NODOS_CAMINO) {
             JOptionPane.showMessageDialog(parentComponent,
-                "Debe haber al menos " + MIN_NODOS_CAMINO + " nodos",
-                "Error",
-                JOptionPane.ERROR_MESSAGE);
+                    "Debe haber al menos " + MIN_NODOS_CAMINO + " nodos",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -137,9 +129,9 @@ public class ControladorAlgoritmos {
     private void mostrarResultado(ResultadoAlgoritmo resultado) {
         if (!resultado.existeCamino()) {
             JOptionPane.showMessageDialog(parentComponent,
-                "No se encontró un camino entre los nodos seleccionados",
-                resultado.getNombreAlgoritmo(),
-                JOptionPane.WARNING_MESSAGE);
+                    "No se encontró un camino entre los nodos seleccionados",
+                    resultado.getNombreAlgoritmo(),
+                    JOptionPane.WARNING_MESSAGE);
             actualizadorDistancia.accept("N/A");
             actualizadorEstado.accept("No se encontró camino");
             actualizadorResultado.accept("No se encontró un camino entre los nodos seleccionados");
@@ -153,35 +145,33 @@ public class ControladorAlgoritmos {
         actualizadorDistancia.accept(String.valueOf(resultado.getDistanciaTotal()));
 
         List<Integer> caminoBase1 = resultado.getCamino().stream()
-            .map(id -> id + 1)
-            .toList();
+                .map(id -> id + 1)
+                .toList();
 
         String caminoStr = caminoBase1.toString().replace("[", "").replace("]", "");
-        String resultadoPanelInferior = String.format("Camino: %s", caminoStr);
-
-        actualizadorResultado.accept(resultadoPanelInferior);
+        actualizadorResultado.accept(String.format("Camino: %s", caminoStr));
 
         String mensaje = String.format(
-            "Algoritmo: %s\n\nCamino encontrado: %s\n\nDistancia total: %d",
-            resultado.getNombreAlgoritmo(),
-            caminoBase1,
-            resultado.getDistanciaTotal()
-        );
+                "Algoritmo: %s\n\nCamino encontrado: %s\n\nDistancia total: %d",
+                resultado.getNombreAlgoritmo(),
+                caminoBase1,
+                resultado.getDistanciaTotal());
 
         JOptionPane.showMessageDialog(parentComponent,
-            mensaje,
-            "Resultado - " + resultado.getNombreAlgoritmo(),
-            JOptionPane.INFORMATION_MESSAGE);
+                mensaje,
+                "Resultado - " + resultado.getNombreAlgoritmo(),
+                JOptionPane.INFORMATION_MESSAGE);
 
-        actualizadorEstado.accept(resultado.getNombreAlgoritmo() + " ejecutado - Distancia: " + resultado.getDistanciaTotal());
+        actualizadorEstado
+                .accept(resultado.getNombreAlgoritmo() + " ejecutado - Distancia: " + resultado.getDistanciaTotal());
     }
 
-    private void mostrarResultadoPrim(ResultadoAlgoritmo resultado, List<int[]> aristas) {
+    private void mostrarResultadoPrim(ResultadoAlgoritmo resultado, List<Arista> aristas) {
         if (!resultado.existeCamino()) {
             JOptionPane.showMessageDialog(parentComponent,
-                "No se pudo construir el árbol de recubrimiento mínimo",
-                "Prim",
-                JOptionPane.WARNING_MESSAGE);
+                    "No se pudo construir el árbol de recubrimiento mínimo",
+                    "Prim",
+                    JOptionPane.WARNING_MESSAGE);
             actualizadorDistancia.accept("N/A");
             actualizadorResultado.accept("No se pudo construir el árbol de recubrimiento mínimo");
             return;
@@ -195,29 +185,29 @@ public class ControladorAlgoritmos {
 
         StringBuilder aristasStr = new StringBuilder();
         for (int i = 0; i < aristas.size(); i++) {
-            int[] arista = aristas.get(i);
-            aristasStr.append(String.format("%d-%d(%d)", arista[0] + 1, arista[1] + 1, arista[2]));
+            Arista arista = aristas.get(i);
+            aristasStr.append(String.format("%d-%d(%d)",
+                    arista.origen() + 1, arista.destino() + 1, arista.peso()));
             if (i < aristas.size() - 1) {
                 aristasStr.append(", ");
             }
         }
 
-        String resultadoPanelInferior = String.format("Aristas: %s", aristasStr.toString());
-
-        actualizadorResultado.accept(resultadoPanelInferior);
+        actualizadorResultado.accept(String.format("Aristas: %s", aristasStr.toString()));
 
         StringBuilder mensaje = new StringBuilder();
         mensaje.append("Algoritmo: Prim (Árbol de Recubrimiento Mínimo)\n\n");
         mensaje.append("Aristas seleccionadas:\n");
-        for (int[] arista : aristas) {
-            mensaje.append(String.format("  %d → %d (peso: %d)\n", arista[0] + 1, arista[1] + 1, arista[2]));
+        for (Arista arista : aristas) {
+            mensaje.append(String.format("  %d → %d (peso: %d)\n",
+                    arista.origen() + 1, arista.destino() + 1, arista.peso()));
         }
         mensaje.append(String.format("\nPeso total: %d", resultado.getDistanciaTotal()));
 
         JOptionPane.showMessageDialog(parentComponent,
-            mensaje.toString(),
-            "Resultado - Prim",
-            JOptionPane.INFORMATION_MESSAGE);
+                mensaje.toString(),
+                "Resultado - Prim",
+                JOptionPane.INFORMATION_MESSAGE);
 
         actualizadorEstado.accept("Prim ejecutado - Peso total: " + resultado.getDistanciaTotal());
     }
