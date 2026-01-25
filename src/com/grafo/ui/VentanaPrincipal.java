@@ -54,6 +54,7 @@ public class VentanaPrincipal extends JFrame implements AccionesMenu {
     private void inicializarUI() {
         setTitle("Sistema de grafos");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSize(1400, 650);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
